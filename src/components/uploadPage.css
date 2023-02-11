@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata&family=Poppins&display=swap');
+.Content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #EBF4FF;
+    height: 100vh;
+    width: 100vw;
+}
+.upload-div{
+    width: 763px;
+    height: 700px;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 40px rgba(106, 173, 255, 0.25);
+    border-radius: 10px;
+}
+.upload-div-header{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 762px;
+    height: 97px;
+    background: #FFFFFF;
+    border-bottom: 2px solid #6AADFF;
+    border-radius: 10px 10px 0px 0px;
+}
+.upload-div-header-title{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 48px;
+    color: #000000;
+    margin-left: 20px;
+}
+.upload-form-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 763px;
+    height: 579px;
+}
+.upload-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 693px;
+    height: 600px;
+}
+.upload-form-label{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 36px;
+    color: #000000;
+}
+.upload-form-description{
+    width: 678px;
+    height: 174px;
+    background: #FFFFFF;
+    border: 1px solid #6AADFF;
+    border-radius: 7px;
+    outline: #6AADFF;
+    padding-left:15px;
+    padding-top:15px;
+    resize: none;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+    color: rgba(0, 0, 0, 1);
+}
+.upload-form-description::placeholder{
+    font-family: 'Poppins';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 21px;
+/* identical to box height */
+
+
+color: rgba(0, 0, 0, 0.4);
+}
+.upload-form-upload{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 693px;
+    height: 199px;
+    background: #FFFFFF;
+    border: 2px dashed #6AADFF;
+    border-radius: 7px;
+}
+.upload-form-files{
+    display: none;
+}
+.upload-form-files-text{
+    font-family: 'Poppins';
+font-style: normal;
+font-weight: 700;
+font-size: 16px;
+line-height: 24px;
+
+color: #6AADFF;
+}
+.next-button-div{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    width: 693px;
+}
+.next-button{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 115px;
+    height: 39px;
+    background: #FFFFFF;
+    border: 1px solid #6AADFF;
+    border-radius: 5px
+}
+
+.next-button:hover {
+    transition: 0.5s;
+    box-shadow: 0px 0px 10px rgba(106, 173, 225,0.3);
+  }
+  
+.next-button:active {
+    transform: scale(0.4);
+    box-shadow: 0px 0px 5px rgba(106, 173, 225,0.3);
+  }
+.next-button-text{
+    font-family: 'Poppins';
+font-style: normal;
+font-weight: 400;
+font-size: 15px;
+line-height: 30px;
+}
+.upload-state{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 38px;
+    color: #6AADFF
+}
+
+.progess-div{
+    width: 678px;
+    height: 174px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .spiner {
+      animation: loading-image infinite 5s linear;
+    }
+  }
+
+  
+@keyframes loading-image {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  

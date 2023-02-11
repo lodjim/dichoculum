@@ -1,0 +1,177 @@
+   function progressBar(cursor,file_id_length){
+        var new_percent = (cursor*100)/file_id_length
+        setPercent(new_percent)
+    }
+
+    function handleEmbeddings(){
+        
+        for (var file_id in files_ids){
+            fetch(`https://c50a-41-82-172-89.ngrok.io/retrieve_summary?file_id=${file_id}`).then((
+                function(response){
+                    return response.json();
+                }
+            )).then((data)=>{
+                //here
+            }
+            )
+          
+                fetch(`https://c50a-41-82-172-89.ngrok.io/compute_fingerprint?text=${text}&skills=${text}`)
+                .then(function(response) {
+                        return response.json();
+                    }).then(data => {
+                        if (data.status){
+                            
+                            fetch("http://192.168.43.52:8000/insert2ngt",{
+                                method: "POST",
+                                headers:{
+                                    "Accept":"application/json",
+                                    "Content-Type":"application/json"
+                                },
+                                body: JSON.stringify({
+                                    "file_id":files_ids[cursor],
+                                    "embedding":data.fingerprint
+                                }),
+                                }).then(function(response) {
+                                    return response.json();
+                                }).then(data => {
+                                    if (data.status){
+                                        console.log(data.object_id)
+                                    }
+                                })          
+
+                        }
+                        cursor++;
+                        progressBar(cursor,files_ids.length);
+                        if (cursor == files_ids.length){
+                            setEmbeddingsAdvancement('done')
+                            navigate("/dashboard/")
+                        }
+                })
+            
+     
+        }
+
+    }
+
+    function handleSummary(){
+        
+
+        for (var file_id in files_ids){
+            fetch(`https://c50a-41-82-172-89.ngrok.io/retrieve_extracted_text?file_id=${file_id}`).then(function(response) {
+                    return response.json();
+                }).then(data => {
+                    if (data.status){
+                        fetch('https://c50a-41-82-172-89.ngrok.io/build_summary',
+                        {
+                            method:"POST",
+                            headers:{
+                                "Accept":"application/json",
+                                "Content-Type":"application/json"
+                            },
+                            body:JSON.stringify({
+                                
+                                    "file_id": file_id,
+                                    "project_id": project_id,
+                                    "extracted_text": data.content.extracted_text
+                                  
+                            })
+                        }
+                            )
+                    }
+                })          
+
+        }
+        setSummaryAdvancement('ready')
+    }
+
+    function handleExtraction(){
+   
+        fetch('https://c50a-41-82-172-89.ngrok.io/get_project_files').then((response)=>{return response.json()}).then((data)=>{
+        if(data.status){
+            setFiles_Ids(data.content.file_ids)
+        }    
+        })
+        var files_ids_local = files_ids
+        for (var file_id in files_ids_local){
+    
+            fetch(`https://c50a-41-82-172-89.ngrok.io/pdf2text?project_id=${project_id}&file_id=${file_id}`)
+            .then(function(response) {
+                    return response.json();
+                }).then(data => {
+                    if (data.status){
+                        console.log('......')
+                    }
+                    cursor++;
+                    progressBar(cursor,files_ids_local.length);
+       
+            })
+        }
+        setExtractionAdvancement('done')
+        
+    }
+    // useEffect zone
+    useEffect(()=>{
+            handleExtraction();
+    },[])
+
+    useEffect(()=>{
+        console.log('hihi', extractionAdvancement, dataFinishedExtraction.length)
+        var storageData = localStorage.getItem('data')
+        storageData = JSON.parse(storageData)
+        var files_ids = storageData.file_id
+
+        if (dataFinishedExtraction.length == files_ids.length){
+            console.log('calll', dataFinishedExtraction.length, storageData.extracted_text)
+            handleSummary();
+        }
+    },[extractionAdvancement])
+
+    useEffect(()=>{
+        var stringified_dataStorage = localStorage.getItem('project_ids')
+        var dataStorage = JSON.parse(stringified_dataStorage)
+        var project_id_init = dataStorage[dataStorage.length-1]
+        setProjectId(project_id_init)
+    },[])
+
+
+    useEffect(()=>{
+        if (summaryAdvancement==='ready'){
+            setPercent(0)
+            setSummaryAdvancement("progress")
+            var interval_id = setInterval(()=>{
+                var files_ids_local = files_ids
+                for(var id in files_ids_local ){
+                    fetch(`https://c50a-41-82-172-89.ngrok.io/monitor_summary?file_id=${id}`)
+                    .then(function(response) {
+                        return response.json();
+                    }).then(data => {
+                        console.log(data);
+                        var current_status = data.task_data.status 
+                        var current_value = taskStatus[current_status]
+                        if(current_value < 2){
+                            var nbFinishedTask_local = nbFinishedTask;
+                            if (nbFinishedTask_local.length<files_ids.length){
+                                nbFinishedTask_local.push(current_value)
+                                setNbFinishedTask(nbFinishedTask_local);
+                                progressBar(nbFinishedTask_local.length,files_ids.length)
+                                
+                            }
+                            else{
+                                    clearInterval(interval_id)
+                                    setSummaryAdvancement('done')
+                                    setPercent(0)                 
+                            }
+                            
+                        }
+                    })
+                }
+                
+            },1000)
+            
+
+        }
+        else if(summaryAdvancement === 'done'){
+            setEmbeddingsAdvancement('progress')
+            handleEmbeddings()
+        }
+    },[summaryAdvancement])
